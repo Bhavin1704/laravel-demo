@@ -31,7 +31,12 @@ class ProfileController extends Controller
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
-
+        $notification = new \MBarlow\Megaphone\Types\Important(
+            'Profile Update',
+            'Your profile updated succesfully'
+        );
+        $user = \App\Models\User::find(auth()->user()->id);
+        $user->notify($notification);
         $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
